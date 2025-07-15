@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import {useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import axios from 'axios';
 
@@ -6,16 +7,37 @@ function Login() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    function handleSubmit(event){
+    async function handleSubmit(event){
         event.preventDefault();
-        axios.post('http://localhost:5000/login', {email, password})
-        .then(res => console.log(res))
-        .catch(err => console.log(err));
+                try {
+            const response = await fetch('http://localhost:5000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+            });
+
+            const data = await response.json();
+
+            alert(data.message);
+        } catch (error) {
+            console.error('Login error:', error);
+            alert("An error occurred while Logging up.");
+        }
+    }
+
+    const navigate = useNavigate();
+
+    const gotoSignup = (event) => {
+        event.preventDefault();
+        navigate('/signup');
     }
 
     return (
     <div className='d-flex vh-100 justify-content-center align-items-center bg-primary'>
-        <div className='p-3 bg-white w-25'>
+        <div className='d-flex p-3 bg-white w-50 h-50 justify-content-center align-items-center' >
             <form onSubmit={handleSubmit}>
                 <div className='mb-3'>
                     <label htmlFor='email'>Email</label>
@@ -27,7 +49,11 @@ function Login() {
                     <input type='password' placeholder='Enter Password' className='form-control'
                     onChange={e => setPassword(e.target.value)}/>
                 </div>
-                <button className='btn btn-success'>Login</button>
+                <div>
+                    <button className='btn btn-success'>Login</button>
+                    <button className='btn' onClick={gotoSignup}>Signup</button>
+                </div>
+                
             </form>
         </div>
     </div>
