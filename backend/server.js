@@ -54,7 +54,6 @@ app.post('/signup', async (req, res) => {
 
     try {
     // Hash the password
-        const hashedPassword = await bcrypt.hash(password, 10);
 
         const sql = "INSERT INTO users (name, email, password) VLAUES (?, ?, ?)";
 
