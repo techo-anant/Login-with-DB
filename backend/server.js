@@ -33,7 +33,7 @@ db.connect((err) => {
 app.post('/login', (req, res) => {
   const sql = "SELECT * FROM users WHERE email = ?";
   db.query(sql, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json({message: "Database error"});
+    if (err) return res.status(500).json({message: "Database error!"});
 
     if (data.length === 0) {
       return res.status(401).json({message: "Login Failed: User not found"});
