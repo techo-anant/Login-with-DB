@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import axios from 'axios';
 
 function Login() {
     const [email, setEmail] = useState('')
@@ -51,7 +50,7 @@ function Login() {
                 </div>
                 <div>
                     <button className='btn btn-success'>Login</button>
-                    <button className='btn' onClick={gotoSignup}>Signup</button>
+                    <button className='btn btn-success' onClick={gotoSignup}>Signup</button>
                 </div>
                 
             </form>

@@ -1,11 +1,13 @@
 import React , {useState} from 'react'
-import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
 
 function Signup() {
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const navigate = useNavigate();
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -23,6 +25,9 @@ function Signup() {
             const data = await response.json();
 
             alert(data.message);
+            if(response.status === 201 || response.status === 400){
+                navigate('/login');
+            }
         } catch (error) {
             console.error('Signup error:', error);
             alert("An error occurred while signing up.");

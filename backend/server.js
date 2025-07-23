@@ -53,9 +53,7 @@ app.post('/signup', async (req, res) => {
     console.log(req.body);
 
     try {
-    // Hash the password
-
-        const sql = "INSERT INTO users (name, email, password) VLAUES (?, ?, ?)";
+        const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
 
         db.query(sql, [name, email, password], (err, result) => {
             if(err){
