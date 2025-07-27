@@ -1,5 +1,6 @@
 import React , {useState} from 'react'
 import { useNavigate } from 'react-router-dom';
+import './signup.css'
 
 function Signup() {
 
@@ -35,25 +36,26 @@ function Signup() {
     }
 
     return (
-    <div>
-        <div>
+    <div className='bg-primary vh-100 d-flex justify-content-center align-items-center'>
+        <div className='box bg-white'>
             <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor='name'>Email</label>
-                    <input type='text' placeholder='Enter Name' 
+                <div className='mb-3 text-start'>
+                    <label htmlFor='name'>Name</label>
+                    <input type='text' placeholder='Enter Name' className='form-control'
                     onChange={(e) => setName(e.target.value)}/>
                 </div>
-                <div>
+                <div className='mb-3 text-start'>
                     <label htmlFor='email'>Email</label>
-                    <input type='email' placeholder='Enter Email'
+                    <input type='email' placeholder='Enter Email' className='form-control p-2'
+                    required
                     onChange={(e) => setEmail(e.target.value)}/>
                 </div>
-                <div>
+                <div className='mb-3 text-start'>
                     <label htmlFor='password'>Password</label>
-                    <input type='password' placeholder='Enter Password'
+                    <input type='password' placeholder='Enter Password' className='form-control'
                     onChange={(e) => setPassword(e.target.value)}/>
                 </div>
-                <button>Signup</button>
+                <button className='btn btn-success'>Signup</button>
             </form>
         </div>
     </div>

@@ -1,8 +1,10 @@
 import React,  { useState } from 'react'
 import {useNavigate} from 'react-router-dom'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './signup.css'
 
 function Login() {
+    const navigate = useNavigate();
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
@@ -20,14 +22,16 @@ function Login() {
 
             const data = await response.json();
 
+            if ( response.status === 200){
+                navigate('/success');
+                return;
+            }
             alert(data.message);
         } catch (error) {
             console.error('Login error:', error);
             alert("An error occurred while Logging up.");
         }
     }
-
-    const navigate = useNavigate();
 
     const gotoSignup = (event) => {
         event.preventDefault();
@@ -36,21 +40,22 @@ function Login() {
 
     return (
     <div className='d-flex vh-100 justify-content-center align-items-center bg-primary'>
-        <div className='d-flex p-3 bg-white w-50 h-50 justify-content-center align-items-center' >
+        <div className='box bg-white' >
             <form onSubmit={handleSubmit}>
-                <div className='mb-3'>
+                <div className='mb-3 text-start'>
                     <label htmlFor='email'>Email</label>
                     <input type='email' placeholder='Enter Email' className='form-control'
+                    required
                     onChange={e => setEmail(e.target.value)}/>
                 </div>
-                <div className='mb-3'>
+                <div className='mb-3 text-start'>
                     <label htmlFor='password'>Password</label>
                     <input type='password' placeholder='Enter Password' className='form-control'
                     onChange={e => setPassword(e.target.value)}/>
                 </div>
                 <div>
-                    <button className='btn btn-success'>Login</button>
-                    <button className='btn btn-success' onClick={gotoSignup}>Signup</button>
+                    <button className='btn btn-success me-3'>Login</button>
+                    <button className='btn btn-success ms-3' onClick={gotoSignup}>Signup</button>
                 </div>
                 
             </form>
