@@ -1,7 +1,6 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors'); //to access the frontend APIs
-const bcrypt = require('bcrypt');// to secure the password
 const { hasSubscribers } = require('diagnostics_channel');
 
 
