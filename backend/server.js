@@ -68,6 +68,10 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+app.post('/success', (req, res) => {
+    return res.status(200).json({ message: "Logged out successfully" });
+});
+
 //Routes
 app.get('/', (req, res) => {
     res.send('This is the backend.')
