@@ -2,7 +2,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors'); //to access the frontend APIs
 const { hasSubscribers } = require('diagnostics_channel');
-
+const jwt = require('jsonwebtoken');
 
 const app = express();
 const PORT = 5000;
@@ -23,10 +23,10 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
   if (err) {
-    console.error('❌ MySQL connection failed:', err.message);
+    console.error('MySQL connection failed:', err.message);
     return;
   }
-  console.log('✅ Connected to MySQL database!');
+  console.log('Connected to MySQL database!');
 });
 
 app.post('/login', (req, res) => {
@@ -40,7 +40,22 @@ app.post('/login', (req, res) => {
 
     // Compare entered password with hashed password in DB
     if (req.body.password === data[0].password) {
-        return res.status(200).json({message: "Login Successful"});
+
+      // Generate JWT
+      const jwtToken = jwt.sign(
+        { id: data[0].id, email: data[0].email },
+        "superSecretKey", // use env var in production
+        { expiresIn: "1d" }
+      );
+
+      // Set cookie
+      res.cookie("token", jwtToken, {
+        httpOnly: true,
+        secure: false,  
+        sameSite: "Strict",
+        maxAge: 24 * 60 * 60 * 1000
+      });
+      return res.status(200).json({ message: "Login Successful" });
       } else {
         return res.status(401).json({message: "Login Failed: Incorrect password"});
     };
@@ -68,8 +83,10 @@ app.post('/signup', async (req, res) => {
     }
 });
 
+
 app.post('/success', (req, res) => {
-    return res.status(200).json({ message: "Logged out successfully" });
+  res.clearCookie("token");   // deletes the cookie
+  return res.status(200).json({ message: "Logged out successfully" });
 });
 
 //Routes

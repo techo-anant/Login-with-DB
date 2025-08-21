@@ -9,7 +9,8 @@ const Success = () => {
     event.preventDefault();
     try{
       const response = await fetch("http://localhost:5000/success", {
-        method: "POST"
+        method: "POST",
+        credentials: "include"
       });
 
       if(response.status === 500) {
