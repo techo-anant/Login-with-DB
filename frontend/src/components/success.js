@@ -5,6 +5,10 @@ import { useNavigate } from 'react-router-dom';
 
 const Success = () => {
   const navigate = useNavigate();
+  function goToSignout(event){
+    event.preventDefault();
+    navigate('/signout');
+  }
   async function handleLogout(event) {
     event.preventDefault();
     try{
@@ -25,11 +29,14 @@ const Success = () => {
   }
   return (
     <div>
-        <div className='d-flex w-100 h-100 justify-content-center align-items-center'>
-            <h1>Hi there, you have successfully logged In!
-              Please try to login with another email ID and password.
+        <div className='d-rflex w-100 justify-content-center align-items-center' style={{ height: "100vh"}}>
+            <h1 className=''>Hi there, you have successfully logged In! <br/>
+              <b>Have your home page here.</b>
             </h1>
-            <button onClick={handleLogout}>Logout</button>
+            <div>
+              <button onClick={handleLogout} className='btn btn-success mt-3'>Logout</button>
+              <button onClick={goToSignout} className='btn btn-success mt-3' style={{ marginLeft: "20px" }}>Signout</button>
+            </div>
         </div>
     </div>
   )

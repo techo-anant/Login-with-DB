@@ -9,6 +9,10 @@ const PORT = 5000;
 
 //Middleware
 // app.use(cors());
+
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+
 app.use(cors({
   origin: 'http://localhost:3000',  // or wherever your frontend runs
   credentials: true
@@ -87,6 +91,27 @@ app.post('/signup', async (req, res) => {
 app.post('/success', (req, res) => {
   res.clearCookie("token");   // deletes the cookie
   return res.status(200).json({ message: "Logged out successfully" });
+});
+
+app.post("/signout", async (req, res) => {
+  try {
+    // decode cookie if needed
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ error: "No token provided" });
+    }
+
+    const decoded = jwt.verify(token, "superSecretKey");
+
+    db.query("DELETE FROM users WHERE email = ?", [decoded.email], (err, result) => {
+      if (err) throw err;
+      res.clearCookie("token");
+      res.json({ message: "Signed out and user deleted successfully" });
+    });
+  } catch (error) {
+    console.error("Signout error:", error);
+    return res.sendStatus(500);
+  }
 });
 
 //Routes
