@@ -1,7 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
+const bcrypt = require('bcrypt');
 const cors = require('cors'); //to access the frontend APIs
-const { hasSubscribers } = require('diagnostics_channel');
 const jwt = require('jsonwebtoken');
 
 const app = express();
@@ -19,10 +19,10 @@ app.use(cors({
 }));
 app.use(express.json());
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "login_db",
-    password: "Anant@123",
-    database: "Login"
+  host: "localhost",
+  user: "login_db",
+  password: "Anant@123",
+  database: "Login"
 })
 
 db.connect((err) => {
@@ -33,58 +33,66 @@ db.connect((err) => {
   console.log('Connected to MySQL database!');
 });
 
-app.post('/login', (req, res) => {
-  const sql = "SELECT * FROM users WHERE email = ?";
-  db.query(sql, [req.body.email], (err, data) => {
-    if (err) return res.status(500).json({message: "Database error!"});
+app.post('/login', async (req, res) => {
+  try {
+    const sql = "SELECT * FROM users WHERE email = ?";
+    const [data] = await db.promise().query(sql, [req.body.email]);
 
     if (data.length === 0) {
-      return res.status(401).json({message: "Login Failed: User not found"});
+      return res.status(401).json({ message: "Login Failed: User not found" });
     }
 
     // Compare entered password with hashed password in DB
-    if (req.body.password === data[0].password) {
 
-      // Generate JWT
-      const jwtToken = jwt.sign(
-        { id: data[0].id, email: data[0].email },
-        "superSecretKey", // use env var in production
-        { expiresIn: "1d" }
-      );
+    // Compare entered password with hashed password
+    const isMatch = await bcrypt.compare(req.body.password, data[0].password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Login Failed: Incorrect password" });
+    }
 
-      // Set cookie
-      res.cookie("token", jwtToken, {
-        httpOnly: true,
-        secure: false,  
-        sameSite: "Strict",
-        maxAge: 24 * 60 * 60 * 1000
-      });
-      return res.status(200).json({ message: "Login Successful" });
-      } else {
-        return res.status(401).json({message: "Login Failed: Incorrect password"});
-    };
-  });
+    // Generate JWT
+    const jwtToken = jwt.sign(
+      { id: data[0].id, email: data[0].email },
+      "superSecretKey", // use env var in production
+      { expiresIn: "1d" }
+    );
+
+    // Set cookie
+    res.cookie("token", jwtToken, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Strict",
+      maxAge: 24 * 60 * 60 * 1000
+    });
+    return res.status(200).json({ message: "Login Successful" });
+  } catch (error) {
+    console.log("Login erroe:", error);
+    return res.status(401).json({ message: "Login Failed: Incorrect password" });
+  };
 });
 
 app.post('/signup', async (req, res) => {
-    const {name, email, password} = req.body;
-    console.log(req.body);
+  const { name, email, password } = req.body;
+  console.log(req.body);
 
-    try {
-        const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+  // 1. Hash password
+  const hashedPassword = await bcrypt.hash(password, 10); // 10 = salt rounds
 
-        db.query(sql, [name, email, password], (err, result) => {
-            if(err){
-                if(err.code === 'ER_DUP_ENTRY'){
-                    return res.status(400).json({message: "Email already exists"});
-                }
-                return res.status(500).json({message: "Database error", errro: err});
-            }
-            return res.status(201).json({ message: "User registered successfully" });
-        });
-    } catch (error){
-        return res.status(500).json({ message: "Server error", error });
-    }
+  try {
+    const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+
+    db.query(sql, [name, email, hashedPassword], (err, result) => {
+      if (err) {
+        if (err.code === 'ER_DUP_ENTRY') {
+          return res.status(400).json({ message: "Email already exists" });
+        }
+        return res.status(500).json({ message: "Database error", errro: err });
+      }
+      return res.status(201).json({ message: "User registered successfully" });
+    });
+  } catch (error) {
+    return res.status(500).json({ message: "Server error", error });
+  }
 });
 
 
@@ -116,10 +124,10 @@ app.post("/signout", async (req, res) => {
 
 //Routes
 app.get('/', (req, res) => {
-    res.send('This is the backend.')
+  res.send('This is the backend.')
 })
 
 //Setup server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 })

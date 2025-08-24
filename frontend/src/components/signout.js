@@ -26,10 +26,10 @@ function Signout() {
     }
 
     return (
-        <div className='d-flex w-100 justify-content-center align-items-center' style={{ height: "100vh" }}>
-            <div className='box d-flex flex-column align-items-center w-100'>
+        <div className='d-flex w-100 justify-content-center align-items-center bg-white' style={{ height: "100vh" }}>
+            <div className='box d-flex flex-column align-items-center w-100 bg-white'>
                 <h2 className='text-center'>
-                    Thanks for being a customer! <br /> 
+                    <b>Thanks for being a customer!</b> <br /> 
                     Remember this will remove all your records from our system and you will have to sign up next time.
                 </h2>
                 <button className='btn btn-success w-25 mt-3' onClick={handleSignout}>

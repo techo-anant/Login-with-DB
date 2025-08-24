@@ -1,6 +1,7 @@
 import React from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import './../styles/signup.css'
 
 
 const Success = () => {
@@ -28,8 +29,8 @@ const Success = () => {
     }
   }
   return (
-    <div>
-        <div className='d-rflex w-100 justify-content-center align-items-center' style={{ height: "100vh"}}>
+    <div className='d-flex w-100 vh-100 justify-content-center align-items-center bg-light'>
+        <div className=' box bg-white'>
             <h1 className=''>Hi there, you have successfully logged In! <br/>
               <b>Have your home page here.</b>
             </h1>
